@@ -265,11 +265,13 @@
       (< (:max-retries (:retry (last reqs)) 0) (count reqs))
       {:courier.error/reason :courier.error/retries-exhausted
        :courier.error/data (merge {:attempts (count (requests-for exchanges k))
-                                   :last-res (-> reqs last :res)}
+                                   :last-res (-> reqs last :res)
+                                   :req (:req (last reqs))}
                                   (select-keys (:retry (last reqs)) [:max-retries]))}
 
       ;; Shouldn't happen (tm)
-      :default {:courier.error/reason :courier.error/unknown})))
+      :default {:courier.error/reason :courier.error/unknown
+                :courier.error/data (last reqs)})))
 
 (defn dep? [v]
   (and (map? v)
